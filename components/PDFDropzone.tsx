@@ -1,18 +1,45 @@
-import { Box, Text, Heading, Button, VStack } from "@chakra-ui/react";
+import { Box, Text, Heading, Button, VStack, useToast } from "@chakra-ui/react";
+import { fileState } from "data/atoms";
 import { useDropzone } from "react-dropzone";
+import { useRecoilState } from "recoil";
 
 const PDFDropzone = () => {
-  const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
+  const toast = useToast();
+  const [file, setFile] = useRecoilState(fileState);
+  const {
+    getRootProps,
+    getInputProps,
+    open,
+    isDragActive,
+    isDragAccept,
+    isDragReject,
+  } = useDropzone({
     noClick: true,
     noKeyboard: true,
     maxFiles: 1,
     accept: "application/pdf",
     onDrop: (files, rejections, e) => {
-      console.log(files);
-      console.log(files[0].size);
-      console.log(rejections);
+      if (files.length === 0 && rejections.length !== 0) {
+        toast({
+          title: "Failed to add PDF",
+          description: "Make sure you select only one PDF file.",
+          status: "error",
+          duration: 7000,
+          isClosable: true,
+        });
+      } else {
+        setFile(files[0]);
+        toast({
+          title: "Added PDF",
+          description: `Added PDF file "${files[0].name}".`,
+          status: "success",
+          duration: 7000,
+          isClosable: true,
+        });
+      }
     },
   });
+  console.log(file);
   return (
     <Box
       bg="gray.100"
@@ -27,14 +54,19 @@ const PDFDropzone = () => {
         PDFDropzone
       </Heading>
       <VStack
-        bg="green.200"
+        bg={isDragActive ? "green.300" : "green.200"}
+        transition="background 0.2s"
         {...getRootProps()}
         flex="1"
         alignSelf="stretch"
         p="0.7rem"
         borderRadius="md"
       >
-        <Text>Drag your PDF file here</Text>
+        {file ? (
+          <Text fontFamily="monospace">{file.name}</Text>
+        ) : (
+          <Text>Drag your PDF here</Text>
+        )}
         <input {...getInputProps()} />
         <Button colorScheme="red" onClick={open} size="sm">
           Open file

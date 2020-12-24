@@ -8,7 +8,7 @@ import DownloadZone from "components/DownloadZone";
 
 export default function Home() {
   return (
-    <VStack spacing="0.5rem" align="center">
+    <VStack spacing="0.5rem" align={{ base: "stretch", md: "center" }} px="2rem">
       <VStack spacing="0rem" marginTop="2rem">
         <Heading as="h1">GooseSplitter</Heading>
         <Text textAlign="center">
