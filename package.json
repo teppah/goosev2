@@ -1,5 +1,6 @@
 {
   "name": "goosev2",
+  "sideEffects": false,
   "version": "0.1.0",
   "private": true,
   "scripts": {
