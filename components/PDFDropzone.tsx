@@ -51,7 +51,7 @@ const PDFDropzone = () => {
       p="0.8rem"
     >
       <Heading as="h2" size="md">
-        PDFDropzone
+        Select your file
       </Heading>
       <VStack
         bg={isDragActive ? "green.300" : "green.200"}
@@ -68,7 +68,7 @@ const PDFDropzone = () => {
           <Text>Drag your PDF here</Text>
         )}
         <input {...getInputProps()} />
-        <Button colorScheme="red" onClick={open} size="sm">
+        <Button colorScheme="blue" onClick={open} size="sm">
           Open file
         </Button>
       </VStack>
