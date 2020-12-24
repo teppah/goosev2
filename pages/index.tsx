@@ -8,9 +8,9 @@ import DownloadZone from "components/DownloadZone";
 
 export default function Home() {
   return (
-    <VStack spacing="0.5rem">
+    <VStack spacing="0.5rem" align="center">
       <VStack spacing="0rem" marginTop="2rem">
-        <Heading>GooseSplitter</Heading>
+        <Heading as="h1">GooseSplitter</Heading>
         <Text textAlign="center">
           Conveniently split your PDFs for Crowdmark Submission
         </Text>
