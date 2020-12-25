@@ -7,19 +7,32 @@ import {
   Heading,
   useToast,
 } from "@chakra-ui/react";
-import { fileState as fState, isShowInvalid } from "data/atoms";
-import { useRecoilValue } from "recoil";
-import { MouseEvent } from "react";
+import {
+  fileState as fileState,
+  formatState,
+  isShowInvalid,
+  pageState as pState,
+} from "data/atoms";
+import { getZipFile } from "util/process-pdf";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { MouseEvent, useState } from "react";
+import { PDFDocument } from "pdf-lib";
+import { downloadUint8ToFile, getPageStartNumber } from "util/utils";
 
 const DownloadWidget = () => {
-  const isInvalid = useRecoilValue(isShowInvalid);
-  const file = useRecoilValue(fState);
+  const isInvalidated = useRecoilValue(isShowInvalid);
+  const setFormat = useSetRecoilState(formatState);
+  const pageState = useRecoilValue(pState);
+  const file = useRecoilValue(fileState);
   const toast = useToast();
+
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const handleProcess = async (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => {
     e.preventDefault();
-    if (isInvalid) {
+    if (isInvalidated) {
       toast({
         title: "Invalid format",
         description:
@@ -38,15 +51,61 @@ const DownloadWidget = () => {
       });
       return;
     }
-    const stream = await file.arrayBuffer();
-    const bytes = new Uint8Array(stream);
+    try {
+      setIsProcessing(true);
+      const buffer = await file.arrayBuffer();
+      const uploaded = await PDFDocument.load(buffer, {
+        ignoreEncryption: true,
+      });
+      const expectedTotalCount = getPageStartNumber(
+        pageState.pages,
+        pageState.pages.length - 1
+      );
+      const actualPageCount = uploaded.getPageCount();
+      if (expectedTotalCount !== actualPageCount) {
+        toast({
+          title: "Wrong page count",
+          description: `The format you entered has ${expectedTotalCount} pages, which doesn't match your PDF's page count (${actualPageCount}).`,
+          status: "error",
+          isClosable: true,
+        });
+        setFormat((oldFormat) => {
+          return { ...oldFormat, isInvalidated: true };
+        });
+        return;
+      }
 
-    toast({
-      title: "Finished processing!",
-      description: "The download for your files has started.",
-      status: "success",
-      isClosable: true,
-    });
+      const zip = await getZipFile(
+        uploaded,
+        pageState.pages,
+        pageState.outputFileFormat
+      );
+      const zipBytes = await zip.generateAsync({
+        type: "uint8array",
+        compression: "DEFLATE",
+        compressionOptions: {
+          level: 3,
+        },
+      });
+      downloadUint8ToFile(zipBytes, "questions.zip", "application/zip");
+
+      setIsProcessing(false);
+      toast({
+        title: "Finished processing!",
+        description: "The download for your files has started.",
+        status: "success",
+        isClosable: true,
+      });
+    } catch (e) {
+      setIsProcessing(false);
+      console.error(e);
+      toast({
+        title: "Unexpected error",
+        description: `${e}`,
+        status: "error",
+        isClosable: true,
+      });
+    }
   };
   return (
     <VStack
@@ -61,7 +120,7 @@ const DownloadWidget = () => {
       <Heading as="h2" size="md" textAlign="center">
         Get your file
       </Heading>
-      <Button onClick={handleProcess}>Process</Button>
+      <Button onClick={handleProcess}>{isProcessing ? <Spinner/> : "Download"}</Button>
     </VStack>
   );
 };
