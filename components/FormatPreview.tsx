@@ -9,6 +9,7 @@ import {
 import { formatState, pageState as pState } from "data/atoms";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
+import { getPageStartNumber } from "util/utils";
 
 const validator = /[^0-9 ]/g;
 
@@ -33,7 +34,6 @@ const FormatPreview = () => {
         .split(" ")
         .filter((str) => str.length !== 0)
         .map((val) => parseInt(val));
-      console.log(pageArray);
       setPageState((oldState) => {
         return { ...oldState, pages: pageArray };
       });
@@ -57,9 +57,7 @@ const FormatPreview = () => {
       ) : (
         <UnorderedList>
           {pageState.pages.map((nPages, i, arr) => {
-            const start = arr
-              .slice(0, i)
-              .reduce((prev, next) => prev + next, 1);
+            const start = getPageStartNumber(arr, i);
             return (
               <ListItem key={i} mx="1rem">
                 Question {i + 1}, containing {nPages} page(s) ({start} to{" "}

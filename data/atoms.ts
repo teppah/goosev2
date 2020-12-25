@@ -30,5 +30,5 @@ export type PageType = {
 
 export const pageState = atom<PageType>({
   key: "page",
-  default: { pages: [], outputFileFormat: "{d}.pdf" },
+  default: { pages: [], outputFileFormat: "Question {d}" },
 });
