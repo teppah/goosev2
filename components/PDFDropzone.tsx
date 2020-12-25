@@ -26,7 +26,6 @@ const PDFDropzone = () => {
           title: "Failed to add PDF",
           description: "Make sure you select only one PDF file.",
           status: "error",
-          duration: 7000,
           isClosable: true,
         });
       } else {
@@ -35,7 +34,6 @@ const PDFDropzone = () => {
           title: "Added PDF",
           description: `Added PDF file "${files[0].name}".`,
           status: "success",
-          duration: 7000,
           isClosable: true,
         });
       }

@@ -1,14 +1,67 @@
-import { Box, Text, Button, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Button,
+  Spinner,
+  VStack,
+  Heading,
+  useToast,
+} from "@chakra-ui/react";
+import { fileState as fState, isShowInvalid } from "data/atoms";
+import { useRecoilValue } from "recoil";
+import { MouseEvent } from "react";
 
-const DownloadZone = () => {
+const DownloadWidget = () => {
+  const isInvalid = useRecoilValue(isShowInvalid);
+  const fileState = useRecoilValue(fState);
+  const toast = useToast();
+  const handleProcess = async (
+    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  ) => {
+    e.preventDefault();
+    if (isInvalid) {
+      toast({
+        title: "Invalid format",
+        description:
+          "The format can only contain numbers, separated by spaces.",
+        status: "error",
+        isClosable: true,
+      });
+      return;
+    }
+    if (!fileState) {
+      toast({
+        title: "No file added",
+        description:
+        "Please select a PDF file.",
+        status: "error",
+        isClosable: true,
+      });
+      return;
+    }
+    toast({
+      title: "Finished processing!",
+      description: "The download for your files has started.",
+      status: "success",
+      isClosable: true,
+    });
+  };
   return (
-    <Box bg="gray.400">
-      <Text>DownloadZone</Text>
-      <Button colorScheme="blue">
-        <Spinner />
-      </Button>
-    </Box>
+    <VStack
+      border="1px"
+      borderColor="gray.300"
+      d="flex"
+      flexDir="column"
+      alignItems="center"
+      borderRadius="md"
+      p="0.8rem"
+    >
+      <Heading as="h2" size="md" textAlign="center">
+        Get your file
+      </Heading>
+      <Button onClick={handleProcess}>Process</Button>
+    </VStack>
   );
 };
 
-export default DownloadZone;
+export default DownloadWidget;

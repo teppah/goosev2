@@ -19,7 +19,8 @@ const FormatPreview = () => {
     if (
       // need both because of js regex weirdness
       validator.test(format.formatString) ||
-      validator.exec(format.formatString) !== null
+      validator.exec(format.formatString) !== null ||
+      format.formatString.length === 0
     ) {
       setFormat((oldFormat) => {
         return { ...oldFormat, isInvalidated: true };
@@ -46,7 +47,7 @@ const FormatPreview = () => {
       flexDir="column"
       alignItems="center"
       borderRadius="md"
-      p="0.8rem"
+      p="0.7rem"
     >
       <Heading as="h2" size="md" textAlign="center">
         Format Preview
@@ -60,7 +61,7 @@ const FormatPreview = () => {
               .slice(0, i)
               .reduce((prev, next) => prev + next, 1);
             return (
-              <ListItem key={i}>
+              <ListItem key={i} mx="1rem">
                 Question {i + 1}, containing {nPages} page(s) ({start} to{" "}
                 {start + nPages - 1})
               </ListItem>

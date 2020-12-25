@@ -3,7 +3,7 @@ import { VStack, Text, Heading, useColorMode, Button } from "@chakra-ui/react";
 import PDFDropzone from "components/PDFDropzone";
 import FormatInput from "components/FormatInput";
 import FormatPreview from "components/FormatPreview";
-import DownloadZone from "components/DownloadZone";
+import DownloadWidget from "components/DownloadZone";
 
 export default function Home() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -24,7 +24,7 @@ export default function Home() {
       <PDFDropzone />
       <FormatInput />
       <FormatPreview />
-      <DownloadZone />
+      <DownloadWidget />
     </VStack>
   );
 }

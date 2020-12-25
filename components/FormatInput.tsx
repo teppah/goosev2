@@ -48,10 +48,10 @@ const FormatInput = () => {
       <InputGroup>
         <InputLeftAddon
           children={
-            isInvalidated ? (
-              <NotAllowedIcon color="red.500" />
-            ) : text.length == 0 ? (
+            text.length === 0 ? (
               <MinusIcon color="gray.400" />
+            ) : isInvalidated ? (
+              <NotAllowedIcon color="red.500" />
             ) : (
               <CheckCircleIcon color="green.500" />
             )
@@ -59,7 +59,7 @@ const FormatInput = () => {
         />
         <Input
           placeholder="# # # #"
-          isInvalid={isInvalidated}
+          isInvalid={isInvalidated && text.length > 0}
           value={text}
           onChange={handleUpdate}
         />
