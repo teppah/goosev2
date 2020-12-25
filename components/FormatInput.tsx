@@ -1,19 +1,34 @@
-import { Box, Text, Heading, VStack, Input, HStack } from "@chakra-ui/react";
-import { InfoOutlineIcon } from "@chakra-ui/icons";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  Box,
+  Text,
+  Heading,
+  VStack,
+  Input,
+  HStack,
+  InputGroup,
+  InputLeftAddon,
+} from "@chakra-ui/react";
+import {
+  CheckCircleIcon,
+  InfoOutlineIcon,
+  NotAllowedIcon,
+  MinusIcon,
+} from "@chakra-ui/icons";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { formatState, isShowInvalid } from "data/atoms";
 import { ChangeEvent, useState } from "react";
 
 const FormatInput = () => {
   const isInvalidated = useRecoilValue(isShowInvalid);
   const setFormat = useSetRecoilState(formatState);
+
   const [text, setText] = useState("");
 
   const handleUpdate = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setText(e.target.value);
     setFormat((oldFormat) => {
-      return { ...oldFormat, formatString: e.target.value };
+      return { ...oldFormat, formatString: e.target.value.trim() };
     });
   };
 
@@ -30,13 +45,25 @@ const FormatInput = () => {
       <Heading as="h2" size="md" textAlign="center">
         Enter your desired output format
       </Heading>
-      <Input
-        placeholder="# # # #"
-        borderColor="gray.300"
-        isInvalid={isInvalidated}
-        value={text}
-        onChange={handleUpdate}
-      />
+      <InputGroup>
+        <InputLeftAddon
+          children={
+            isInvalidated ? (
+              <NotAllowedIcon color="red.500" />
+            ) : text.length == 0 ? (
+              <MinusIcon color="gray.400" />
+            ) : (
+              <CheckCircleIcon color="green.500" />
+            )
+          }
+        />
+        <Input
+          placeholder="# # # #"
+          isInvalid={isInvalidated}
+          value={text}
+          onChange={handleUpdate}
+        />
+      </InputGroup>
       <HStack>
         <InfoOutlineIcon color="green.600" />
         <Text fontSize="xs">

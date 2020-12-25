@@ -5,12 +5,12 @@ export const fileState = atom<File>({
   default: null,
 });
 
-export type Format = {
+export type FormatType = {
   formatString: string;
   isInvalidated: boolean;
 };
 
-export const formatState = atom<Format>({
+export const formatState = atom<FormatType>({
   key: "format",
   default: { formatString: "", isInvalidated: false },
 });
@@ -21,4 +21,14 @@ export const isShowInvalid = selector({
     const format = get(formatState);
     return format.isInvalidated;
   },
+});
+
+export type PageType = {
+  pages: number[];
+  outputFileFormat: string;
+};
+
+export const pageState = atom<PageType>({
+  key: "page",
+  default: { pages: [], outputFileFormat: "{d}.pdf" },
 });

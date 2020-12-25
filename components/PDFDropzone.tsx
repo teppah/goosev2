@@ -20,6 +20,7 @@ const PDFDropzone = () => {
     maxFiles: 1,
     accept: "application/pdf",
     onDrop: (files, rejections, e) => {
+      e.preventDefault();
       if (files.length === 0 && rejections.length !== 0) {
         toast({
           title: "Failed to add PDF",
@@ -59,12 +60,12 @@ const PDFDropzone = () => {
         borderColor="gray.400"
         borderStyle="dashed"
         transition="box-shadow 0.2s"
-        {...getRootProps()}
         flex="1"
         alignSelf="stretch"
         p="0.7rem"
         borderRadius="md"
         shadow={isDragActive ? "2xl" : "none"}
+        {...getRootProps()}
       >
         {file ? (
           <Text fontFamily="monospace">
