@@ -1,11 +1,10 @@
 import "../styles/globals.css";
-import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { RecoilRoot } from "recoil";
 
-const Goose = ({ Component, pageProps }: AppProps) => {
+const Goose = ({ Component, pageProps }) => {
   return (
-    <ChakraProvider>
+    <ChakraProvider resetCSS>
       <RecoilRoot>
         <Component {...pageProps} />
       </RecoilRoot>
