@@ -13,7 +13,7 @@ import { MouseEvent } from "react";
 
 const DownloadWidget = () => {
   const isInvalid = useRecoilValue(isShowInvalid);
-  const fileState = useRecoilValue(fState);
+  const file = useRecoilValue(fState);
   const toast = useToast();
   const handleProcess = async (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
@@ -29,16 +29,18 @@ const DownloadWidget = () => {
       });
       return;
     }
-    if (!fileState) {
+    if (!file) {
       toast({
         title: "No file added",
-        description:
-        "Please select a PDF file.",
+        description: "Please select a PDF file.",
         status: "error",
         isClosable: true,
       });
       return;
     }
+    const stream = await file.arrayBuffer();
+    const bytes = new Uint8Array(stream);
+
     toast({
       title: "Finished processing!",
       description: "The download for your files has started.",
