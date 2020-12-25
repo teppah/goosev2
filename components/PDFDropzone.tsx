@@ -1,4 +1,5 @@
 import { Box, Text, Heading, Button, VStack, useToast } from "@chakra-ui/react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import { fileState } from "data/atoms";
 import { useDropzone } from "react-dropzone";
 import { useRecoilState } from "recoil";
@@ -39,10 +40,10 @@ const PDFDropzone = () => {
       }
     },
   });
-  console.log(file);
   return (
     <Box
-      bg="gray.100"
+      border="1px"
+      borderColor="gray.300"
       minH="8rem"
       d="flex"
       flexDir="column"
@@ -54,16 +55,22 @@ const PDFDropzone = () => {
         Select your file
       </Heading>
       <VStack
-        bg={isDragActive ? "green.300" : "green.200"}
-        transition="background 0.2s"
+        border="2px"
+        borderColor="gray.400"
+        borderStyle="dashed"
+        transition="box-shadow 0.2s"
         {...getRootProps()}
         flex="1"
         alignSelf="stretch"
         p="0.7rem"
         borderRadius="md"
+        shadow={isDragActive ? "2xl" : "none"}
       >
         {file ? (
-          <Text fontFamily="monospace">{file.name}</Text>
+          <Text fontFamily="monospace">
+            <CheckCircleIcon color="green.600" mr="0.2rem" />
+            {file.name}
+          </Text>
         ) : (
           <Text>Drag your PDF here</Text>
         )}

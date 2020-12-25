@@ -19,7 +19,8 @@ const FormatInput = () => {
 
   return (
     <VStack
-      bg="gray.100"
+      border="1px"
+      borderColor="gray.300"
       d="flex"
       flexDir="column"
       alignItems="center"
@@ -31,7 +32,6 @@ const FormatInput = () => {
       </Heading>
       <Input
         placeholder="# # # #"
-        bg="white"
         borderColor="gray.300"
         isInvalid={isInvalidated}
         value={text}
