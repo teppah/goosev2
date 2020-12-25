@@ -57,10 +57,7 @@ const DownloadWidget = () => {
       const uploaded = await PDFDocument.load(buffer, {
         ignoreEncryption: true,
       });
-      const expectedTotalCount = getPageStartNumber(
-        pageState.pages,
-        pageState.pages.length - 1
-      );
+      const expectedTotalCount = pageState.pages.reduce((a, b) => a + b, 0);
       const actualPageCount = uploaded.getPageCount();
       if (expectedTotalCount !== actualPageCount) {
         toast({
@@ -72,6 +69,7 @@ const DownloadWidget = () => {
         setFormat((oldFormat) => {
           return { ...oldFormat, isInvalidated: true };
         });
+        setIsProcessing(false);
         return;
       }
 
@@ -120,7 +118,9 @@ const DownloadWidget = () => {
       <Heading as="h2" size="md" textAlign="center">
         Get your file
       </Heading>
-      <Button onClick={handleProcess}>{isProcessing ? <Spinner/> : "Download"}</Button>
+      <Button onClick={handleProcess} isDisabled={isProcessing}>
+        {isProcessing ? <Spinner /> : "Download"}
+      </Button>
     </VStack>
   );
 };
