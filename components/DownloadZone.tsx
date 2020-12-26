@@ -2,7 +2,6 @@ import {
   Box,
   Text,
   Button,
-  Spinner,
   VStack,
   Heading,
   useToast,
@@ -41,8 +40,7 @@ const DownloadWidget = () => {
         isClosable: true,
       });
       return;
-    }
-    if (!file) {
+    } else if (!file) {
       toast({
         title: "No file added",
         description: "Please select a PDF file.",
@@ -69,33 +67,28 @@ const DownloadWidget = () => {
         setFormat((oldFormat) => {
           return { ...oldFormat, isInvalidated: true };
         });
-        setIsProcessing(false);
-        return;
+      } else {
+        const zip = await getZipFile(
+          uploaded,
+          pageState.pages,
+          pageState.outputFileFormat
+        );
+        const zipBytes = await zip.generateAsync({
+          type: "uint8array",
+          compression: "DEFLATE",
+          compressionOptions: {
+            level: 3,
+          },
+        });
+        downloadUint8ToFile(zipBytes, "questions.zip", "application/zip");
+        toast({
+          title: "Finished processing!",
+          description: "The download for your files has started.",
+          status: "success",
+          isClosable: true,
+        });
       }
-
-      const zip = await getZipFile(
-        uploaded,
-        pageState.pages,
-        pageState.outputFileFormat
-      );
-      const zipBytes = await zip.generateAsync({
-        type: "uint8array",
-        compression: "DEFLATE",
-        compressionOptions: {
-          level: 3,
-        },
-      });
-      downloadUint8ToFile(zipBytes, "questions.zip", "application/zip");
-
-      setIsProcessing(false);
-      toast({
-        title: "Finished processing!",
-        description: "The download for your files has started.",
-        status: "success",
-        isClosable: true,
-      });
     } catch (e) {
-      setIsProcessing(false);
       console.error(e);
       toast({
         title: "Unexpected error",
@@ -104,6 +97,7 @@ const DownloadWidget = () => {
         isClosable: true,
       });
     }
+    setIsProcessing(false);
   };
   return (
     <VStack
@@ -118,8 +112,8 @@ const DownloadWidget = () => {
       <Heading as="h2" size="md" textAlign="center">
         Get your file
       </Heading>
-      <Button onClick={handleProcess} isDisabled={isProcessing}>
-        {isProcessing ? <Spinner /> : "Download"}
+      <Button onClick={handleProcess} isLoading={isProcessing}>
+        Download
       </Button>
     </VStack>
   );
