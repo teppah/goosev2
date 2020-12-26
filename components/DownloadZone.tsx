@@ -109,10 +109,10 @@ const DownloadWidget = () => {
       borderRadius="md"
       p="0.8rem"
     >
-      <Heading as="h2" size="md" textAlign="center">
+      <Heading as="h2" size="lg" textAlign="center">
         Get your file
       </Heading>
-      <Button onClick={handleProcess} isLoading={isProcessing}>
+      <Button colorScheme="blue" onClick={handleProcess} isLoading={isProcessing}>
         Download
       </Button>
     </VStack>

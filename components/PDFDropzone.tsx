@@ -1,5 +1,14 @@
-import { Box, Text, Heading, Button, VStack, useToast } from "@chakra-ui/react";
-import { CheckCircleIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Text,
+  Heading,
+  Button,
+  VStack,
+  useToast,
+  HStack,
+  Link,
+} from "@chakra-ui/react";
+import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
 import { fileState } from "data/atoms";
 import { useDropzone } from "react-dropzone";
 import { useRecoilState } from "recoil";
@@ -50,24 +59,23 @@ const PDFDropzone = () => {
       borderRadius="md"
       p="0.8rem"
     >
-      <Heading as="h2" size="md">
+      <Heading as="h2" size="lg">
         Select your file
       </Heading>
       <VStack
         border="2px"
-        borderColor="gray.400"
+        borderColor={isDragActive ? "green.500" : "gray.400"}
         borderStyle="dashed"
         transition="box-shadow 0.2s"
         flex="1"
         alignSelf="stretch"
         p="0.7rem"
         borderRadius="md"
-        shadow={isDragActive ? "2xl" : "none"}
         {...getRootProps()}
       >
         {file ? (
-          <Text fontFamily="monospace">
-            <CheckCircleIcon color="green.600" mr="0.2rem" />
+          <Text fontFamily="monospace" fontSize="md">
+            <CheckCircleIcon color="teal.500" mr="0.2rem" />
             {file.name}
           </Text>
         ) : (
@@ -78,6 +86,23 @@ const PDFDropzone = () => {
           Open file
         </Button>
       </VStack>
+      <HStack mt="0.5rem">
+        <WarningIcon color="yellow.500" />
+        <Text fontSize="sm">
+          No data{" "}
+          <strong>
+            <em>ever</em>
+          </strong>{" "}
+          leaves your browser.{" "}
+          <Link
+            isExternal
+            href="https://github.com/teppah/goosev2/blob/main/util/process-pdf.ts"
+            color="teal.500"
+          >
+            See how your PDF is processed right in your browser.
+          </Link>
+        </Text>
+      </HStack>
     </Box>
   );
 };

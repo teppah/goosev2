@@ -42,7 +42,7 @@ const FormatInput = () => {
       borderRadius="md"
       p="0.8rem"
     >
-      <Heading as="h2" size="md" textAlign="center">
+      <Heading as="h2" size="lg" textAlign="center">
         Enter your desired output format
       </Heading>
       <InputGroup>
@@ -53,7 +53,7 @@ const FormatInput = () => {
             ) : isInvalidated ? (
               <NotAllowedIcon color="red.500" />
             ) : (
-              <CheckCircleIcon color="green.500" />
+              <CheckCircleIcon color="teal.500" />
             )
           }
         />
@@ -65,8 +65,8 @@ const FormatInput = () => {
         />
       </InputGroup>
       <HStack>
-        <InfoOutlineIcon color="green.600" />
-        <Text fontSize="xs">
+        <InfoOutlineIcon color="teal.500" />
+        <Text fontSize="sm">
           Space-separated numbers corresponding for the number of pages for each
           question, in order
         </Text>

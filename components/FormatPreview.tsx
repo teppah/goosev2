@@ -49,7 +49,7 @@ const FormatPreview = () => {
       borderRadius="md"
       p="0.7rem"
     >
-      <Heading as="h2" size="md" textAlign="center">
+      <Heading as="h2" size="lg" textAlign="center">
         Format Preview
       </Heading>
       {pageState.pages.length === 0 ? (
