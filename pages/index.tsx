@@ -33,6 +33,11 @@ export default function Home() {
   }, [prefersDark]);
   return (
     <Center>
+      <Head>
+        <title>GooseSplitter - Manage Your Crowdmark Documents</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name="description" content="Conveniently split and manage your Crowdmark PDF submissions"/>
+      </Head>
       <VStack
         spacing="0.5rem"
         align="stretch"
