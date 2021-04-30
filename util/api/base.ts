@@ -1,4 +1,5 @@
 import nc, { Options } from "next-connect";
+import cors from "cors";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type ExtendedRequest = {} & NextApiRequest;
@@ -16,5 +17,6 @@ const onError: Options<ExtendedRequest, NextApiResponse>["onError"] = (
 };
 
 const handler = nc<ExtendedRequest, NextApiResponse>({ onError });
+handler.use(cors());
 
 export default handler;

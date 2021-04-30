@@ -1,8 +1,6 @@
 import handler from "util/api/base";
 import multer from "multer";
-import { PDFDocument, PageSizes } from "pdf-lib";
-import JSZip from "jszip";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { PDFDocument } from "pdf-lib";
 import { getPageFormatArray, isFormatStringValid } from "util/utils";
 import { getZipFile } from "util/process-pdf";
 
