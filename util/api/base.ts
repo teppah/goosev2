@@ -12,7 +12,7 @@ const onError: Options<ExtendedRequest, NextApiResponse>["onError"] = (
   console.error("Failed to handle request:");
   console.error(err);
 
-  res.status(500).end(err.toString());
+  res.status(500).end("Failed to handle request: " + err.toString());
 };
 
 const handler = nc<ExtendedRequest, NextApiResponse>({ onError });

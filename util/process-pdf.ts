@@ -22,7 +22,7 @@ export async function getZipFile(
       });
 
       const qBytes = await currentQ.save();
-      const fileName = questionNameFormat.replaceAll("{d}", `${i + 1}`);
+      const fileName = questionNameFormat.replace(/{d}/g, `${i + 1}`);
       zipFile.file(`${fileName}.pdf`, qBytes);
     })
   );

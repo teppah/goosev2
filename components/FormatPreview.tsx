@@ -9,20 +9,17 @@ import {
 import { formatState, pageState as pState } from "data/atoms";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { getPageStartNumber } from "util/utils";
-
-const validator = /[^0-9 ]/g;
+import {
+  getPageFormatArray,
+  getPageStartNumber,
+  isFormatStringValid,
+} from "util/utils";
 
 const FormatPreview = () => {
   const [format, setFormat] = useRecoilState(formatState);
   const [pageState, setPageState] = useRecoilState(pState);
   useEffect(() => {
-    if (
-      // need both because of js regex weirdness
-      validator.test(format.formatString) ||
-      validator.exec(format.formatString) !== null ||
-      format.formatString.length === 0
-    ) {
+    if (isFormatStringValid(format.formatString)) {
       setFormat((oldFormat) => {
         return { ...oldFormat, isInvalidated: true };
       });
@@ -30,10 +27,7 @@ const FormatPreview = () => {
       setFormat((oldFormat) => {
         return { ...oldFormat, isInvalidated: false };
       });
-      const pageArray: number[] = format.formatString
-        .split(" ")
-        .filter((str) => str.length !== 0)
-        .map((val) => parseInt(val));
+      const pageArray: number[] = getPageFormatArray(format.formatString);
       setPageState((oldState) => {
         return { ...oldState, pages: pageArray };
       });
