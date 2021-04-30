@@ -3,6 +3,8 @@ import multer from "multer";
 import { PDFDocument, PageSizes } from "pdf-lib";
 import JSZip from "jszip";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getPageFormatArray, isFormatStringValid } from "util/utils";
+import { getZipFile } from "util/process-pdf";
 
 const upload = multer({ storage: multer.memoryStorage() });
 // const fields: multer.Field[] = [
@@ -27,35 +29,43 @@ async function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
   });
 }
 
-handler.post(upload.single("zip"), async (req, res) => {
-  const splitString: string = req.body?.splitString;
+handler.post(upload.single("file"), async (req, res) => {
+  const formatString: string = req.body?.formatString;
   if (req.file === undefined) {
-    res.status(400).end("Missing multipart/form-data `zip` file");
+    res.status(400).end("Missing multipart/form-data `pdf` file");
     return;
   }
-  if (splitString === undefined) {
-    res.status(400).end("Missing multipart/form-data `splitString` key");
+  if (req.file.mimetype !== "application/pdf") {
+    res.status(400).end("Wrong multipart/form-data `pdf` file: not a pdf file");
     return;
   }
-  if (req.file.mimetype !== "application/zip") {
-    res.status(400).end("Wrong multipart/form-data `zip` file: not a zip file");
+  if (formatString === undefined) {
+    res.status(400).end("Missing multipart/form-data `formatString` key");
+    return;
+  }
+  if (!isFormatStringValid(formatString)) {
+    res
+      .status(400)
+      .end(
+        "Invalid multipart/form-data `formatString` key: can only contain space-separated numbers"
+      );
     return;
   }
 
-  const sourceZip = await JSZip.loadAsync(req.file.buffer);
-
-  const pageBuffers = await Promise.all(
-    Object.entries(sourceZip.files)
-      // we want ordered pages; assume the page order is directly correlated to filename
-      .sort(([a, ...rest1], [b, ...rest2]) => a.localeCompare(b))
-      .map((a) => a[1])
-      .filter((file) => !file.dir)
-      .map(async (file) => {
-        const stream = file.nodeStream();
-        const buffer = await streamToBuffer(stream);
-        return buffer;
-      })
-  );
+  // --- don't load zip for now, just load the pdf, and split the pdf ---
+  // const sourceZip = await JSZip.loadAsync(req.file.buffer);
+  // const pageBuffers = await Promise.all(
+  //   Object.entries(sourceZip.files)
+  //     // we want ordered pages; assume the page order is directly correlated to filename
+  //     .sort(([a, ...rest1], [b, ...rest2]) => a.localeCompare(b))
+  //     .map((a) => a[1])
+  //     .filter((file) => !file.dir)
+  //     .map(async (file) => {
+  //       const stream = file.nodeStream();
+  //       const buffer = await streamToBuffer(stream);
+  //       return buffer;
+  //     })
+  // );
   // const stream = zippedFile.nodeStream();
   // async iterator... how cool is that?!
   // but weird stuff with Babel and Symbol.asyncIterable makes it unsupported...
@@ -65,9 +75,31 @@ handler.post(upload.single("zip"), async (req, res) => {
   //   chunks.push(chunk);
   // }
   // const buffer = Buffer.concat(chunks);
-  console.log(pageBuffers);
+  // console.log(pageBuffers);
+  // make one big pdf, then give to processPDF
 
-  res.end("WIP");
+  const sourcePdf = await PDFDocument.load(req.file.buffer);
+  const pageFormatArray = getPageFormatArray(formatString);
+  const formatPageCount = pageFormatArray.reduce((prev, cur) => prev + cur);
+  if (sourcePdf.getPageCount() !== formatPageCount) {
+    res
+      .status(400)
+      .end(
+        "Invalid multipart/form-data `formatString` key: not the same number of pages as source file"
+      );
+    return;
+  }
+  const zip = await getZipFile(sourcePdf, pageFormatArray, "Question {d}");
+
+  res.setHeader("Content-Type", "application/zip");
+  res.send(
+    zip.generateNodeStream({
+      type: "nodebuffer",
+      streamFiles: true,
+      compression: "DEFLATE",
+      mimeType: "application/zip",
+    })
+  );
 });
 
 export default handler;
